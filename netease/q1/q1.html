@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <style>
+      .red {
+        background-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="list">
+      <li>song1</li>
+      <li>song2</li>
+      <li>song3</li>
+      <li>song4</li>
+      <li>song5</li>
+    </ul>
+  </body>
+  <script>
+    function clearColor(ele) {
+      for (var i = 0; i < ele.children.length; i++) {
+        if (ele.children[i].nodeType === 1) {
+          ele.children[i].classList.remove('red');
+        }
+      }
+    }
+    var list = document.getElementById('list');
+    list.addEventListener('click', function(event) {
+      clearColor(list);
+      event.target.classList.add('red');
+    })
+  </script>
+</html>

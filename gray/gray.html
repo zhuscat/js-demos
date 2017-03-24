@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <img src="../resource/test_img.jpg" />
+    <canvas></canvas>
+  </body>
+  <script>
+    var image = document.getElementsByTagName('img')[0];
+    image.onload = function() {
+      var canvas = document.getElementsByTagName('canvas')[0];
+      canvas.width = image.width;
+      canvas.height = image.height;
+      var picLength = image.width * image.height;
+      if (canvas.getContext) {
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(image, 0, 0);
+        var imageData = ctx.getImageData(0, 0, image.width, image.height);
+        for (var i = 0; i < picLength * 4; i += 4) {
+          var myRed = imageData.data[i];
+          var myGreen = imageData.data[i + 1];
+          var myBlue = imageData.data[i + 2];
+          var myGray = parseInt((myRed + myGreen + myBlue) / 3);
+          // 还有一个是 alpha 通道
+          imageData.data[i] = myGray;
+          imageData.data[i + 1] = myGray;
+          imageData.data[i + 2] = myGray;
+        }
+        ctx.putImageData(imageData, 0, 0);
+      }
+    }
+  </script>
+</html>

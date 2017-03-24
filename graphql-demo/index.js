@@ -3,6 +3,17 @@ var graphqlHTTP = require('express-graphql');
 var { buildSchema } = require('graphql');
 
 var schema = buildSchema(`
+  input MessageInput {
+    content: String
+    author: String
+  }
+
+  type Message {
+    id: ID!
+    content: String
+    author: String
+  }
+
   type RandomDie {
     numSides: Int!
     rollOnce: Int!
@@ -14,8 +25,22 @@ var schema = buildSchema(`
     random: Float!
     rollThreeDice(numDice: Int!, numSides: Int): [Int]
     getDie(numSides: Int): RandomDie
+    getMessage(id: ID!): Message
+    ip: String
+  }
+
+  type Mutation {
+    createMessage(input: MessageInput): Message
+    updateMessage(id: ID!, input: MessageInput): Message
   }
 `);
+
+function loggingMiddleware(req, res, next) {
+  console.log(`ip: ${req.ip}`);
+  next();
+}
+
+var fakeDatabase = {};
 
 class RandomDie {
   constructor(numSides) {
@@ -32,6 +57,14 @@ class RandomDie {
       output.push(this.rollOnce());
     }
     return output;
+  }
+}
+
+class Message {
+  constructor(id, { content, author }) {
+    this.id = id;
+    this.content = content;
+    this.author = author;
   }
 }
 
@@ -52,9 +85,32 @@ var root = {
   getDie: function ({ numSides }) {
     return new RandomDie(numSides || 6);
   },
+  getMessage: function({ id }) {
+    if (!fakeDatabase[id]) {
+      throw new Error('no message exists with id ' + id);
+    }
+    return new Message(id, fakeDatabase[id]);
+  },
+  createMessage: function ({ input }) {
+    var id = require('crypto').randomBytes(10).toString('hex');
+
+    fakeDatabase[id] = input;
+    return new Message(id, input);
+  },
+  updateMessage: function ({ id, input }) {
+    if (!fakeDatabase[id]) {
+      throw new Error('no message exists with id ' + id);
+    }
+    fakeDatabase[id] = input;
+    return new Message(id, input);
+  },
+  ip: function (args, request) {
+    return request.ip;
+  },
 };
 
 var app = express();
+app.use(loggingMiddleware);
 app.use('/graphql', graphqlHTTP({
   schema,
   rootValue: root,
