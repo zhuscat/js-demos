@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <div id="drag" style="background-color: red; width: 100px; height: 100px; position: relative; left: 0; top: 0; z-index: 999;"></div>
+    <div id="drop" style="background-color: blue; width: 200px; height: 200px; position: relative;"></div>
+  </body>
+  <script>
+    function isOverlap(rc1, rc2) {
+      if (rc1.right > rc2.left &&
+          rc2.right > rc1.left &&
+          rc1.bottom > rc2.top &&
+          rc2.bottom > rc1.top
+      ) {
+        return true;  
+      } else {
+        return false;
+      }
+    }
+
+    var dragEle = document.getElementById('drag');
+    var dropEle = document.getElementById('drop');
+    var dropList = [ dropEle ];
+    var flag = false;
+    var initialX = 0;
+    var initialY = 0;
+    dragEle.addEventListener('mousedown', function(event) {
+      initialX = event.pageX;
+      initialY = event.pageY;
+      flag = true;
+    });
+    dragEle.addEventListener('mousemove', function(event) {
+      if (flag) {
+        var currentX = event.pageX;
+        var currentY = event.pageY;
+        var deltaX = currentX - initialX;
+        var deltaY = currentY - initialY;
+        initialX = currentX;
+        initialY = currentY;
+        // 到时候改成使用 transform transform 的话就是要解析
+        var currentLeft = Number.parseInt(dragEle.style.left);
+        var currentTop = Number.parseInt(dragEle.style.top);
+        dragEle.style.left = (currentLeft + deltaX) + 'px';
+        dragEle.style.top = (currentTop + deltaY) + 'px';
+        for (let i = 0; i < dropList.length; i++) {
+          if (isOverlap(dragEle.getBoundingClientRect(), dropList[i].getBoundingClientRect())) {
+            dropList[i].style.border = '2px solid red';
+          } else {
+            dropList[i].style.border = '';
+          }
+        }
+      }
+    });
+    dragEle.addEventListener('mouseup', function(event) {
+      flag = false;
+      for (let i = 0; i < dropList.length; i++) {
+        if (isOverlap(dragEle.getBoundingClientRect(), dropList[i].getBoundingClientRect())) {
+          dragEle.style.left = '0';
+          dragEle.style.top = '0';
+          dropList[i].appendChild(dragEle);
+        }
+      }
+    });
+  </script>
+</html>

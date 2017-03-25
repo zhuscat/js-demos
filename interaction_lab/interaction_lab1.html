@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <style>
+    #player1 {
+      width: 100px;
+      height: 100px;
+      background-color: red;
+    }
+
+    #player2 {
+      width: 100px;
+      height: 100px;
+      background-color: blue;
+    }
+
+    .bullet {
+      width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      background-color: black;
+    }
+  </style>
+  <body>
+    <div id="player1"></div>
+    <div id="player2"></div>
+  </body>
+  <script>
+    var bullet = {
+      dom: null,
+      speedRatio: 10,
+      init: function(left, top) {
+        this.dom.style.position = 'absolute';
+        this.left = left;
+        this.top = top;
+        this.dom.style.left = this.left + 'px';
+        this.dom.style.top = this.top + 'px';
+        requestAnimationFrame(this.moveRight.bind(this));
+      },
+      moveRight: function() {
+        this.left += this.speedRatio;
+        this.dom.style.left = this.left + 'px';
+        requestAnimationFrame(this.moveRight.bind(this));
+      },
+    }
+    var player1 = {
+      dom: document.getElementById('player1'),
+      speedRatio: 4,
+      init: function() {
+        this.dom.style.position = 'absolute';
+        this.left = 0;
+        this.top = 0;
+        this.dom.style.left = this.left + 'px';
+        this.dom.style.top = this.top + 'px';
+      },
+      moveRight: function() {
+        this.left += this.speedRatio;
+        this.dom.style.left = this.left + 'px';
+      },
+      moveDown: function() {
+        this.top += this.speedRatio;
+        this.dom.style.top = this.top + 'px';
+      },
+      moveUp: function() {
+        this.top -= this.speedRatio;
+        this.dom.style.top = this.top + 'px';
+      },
+      moveLeft: function() {
+        this.left -= this.speedRatio;
+        this.dom.style.left = this.left + 'px';
+      },
+      fire: function () {
+        var b = document.createElement('div');
+        document.body.appendChild(b);
+        b.className = 'bullet';
+        b.position = 'absolute';
+        bullet.dom = b;
+        bullet.init(this.left, this.top);
+      }
+    };
+    var player2 = Object.create(player1);
+    player2.dom = document.getElementById('player2');
+    player1.init();
+    player2.init();
+    var keybuf = {
+      d: false,
+      s: false,
+      a: false,
+      w: false,
+      arrowdown: false,
+      arrowleft: false,
+      arrowright: false,
+      arrowup: false,
+    };
+    function keyStateChange() {
+      if (keybuf.a) {
+        player1.moveLeft();
+      }
+      if (keybuf.s) {
+        player1.moveDown();
+      }
+      if (keybuf.d) {
+        player1.moveRight();
+      }
+      if (keybuf.w) {
+        player1.moveUp();
+      }
+      if (keybuf.arrowdown) {
+        player2.moveDown();
+      }
+      if (keybuf.arrowup) {
+        player2.moveUp();
+      }
+      if (keybuf.arrowleft) {
+        player2.moveLeft();
+      }
+      if (keybuf.arrowright) {
+        player2.moveRight();
+      }
+      if (keybuf[" "]) {
+        player1.fire();
+        keybuf[" "] = false;
+      }
+      requestAnimationFrame(keyStateChange);
+    }
+    document.addEventListener('keydown', function(event) {
+      keybuf[event.key.toLowerCase()] = true;
+    });
+    document.addEventListener('keyup', function(event) {
+      keybuf[event.key.toLowerCase()] = false;
+    });
+    requestAnimationFrame(keyStateChange);
+  </script>
+</html>
