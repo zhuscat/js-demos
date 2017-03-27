@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <input id="input" type="text">
+  </body>
+  <script>
+    var input = document.querySelector('#input');
+    var IS_COMPOSITION = false;
+    input.addEventListener('compositionstart', function(event) {
+      IS_COMPOSITION = true;
+    })
+    input.addEventListener('compositionend', function(event) {
+      console.log('handled in compositionend');
+      IS_COMPOSITION = false;
+    });
+    input.addEventListener('input', function(event) {
+      if (IS_COMPOSITION) {
+        // do nothing
+      } else {
+        console.log('handled in input');
+      }
+    });
+  </script>
+</html>
