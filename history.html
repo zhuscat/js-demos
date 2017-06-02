@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .container {
+        width: 100%;
+        height: 200px;
+      }
+
+      #foo {
+        background-color: red;
+        display: none;
+      }
+
+      #bar {
+        background-color: orange;
+        display: none;
+      }
+
+      #baz {
+        background-color: blue;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="/foo">foo</a>
+    <a href="/bar">bar</a>
+    <a href="/baz">baz</a>
+    <div id="foo" class="container"></div>
+    <div id="bar" class="container"></div>
+    <div id="baz" class="container"></div>
+    <script>
+      var historyModule = {
+        listeners: [],
+        listen: function (listner) {
+          this.listeners.push(listner);
+          console.log('historyModule listen...');
+        },
+        updateLocation: function (location) {
+          this.listeners.forEach(function(listener) {
+            listener(location);
+          });
+        },
+        pushState: function (location) {
+          history.pushState({}, '', location);
+          this.updateLocation(location);
+        }
+      }
+
+      var Router = {
+        source: {},
+        routes: {},
+        init: function (source) {
+          var self = this;
+          this.source = source;
+          this.source.listen(function (location) {
+            self.routes[location]();
+          });
+        },
+        use: function (location, func) {
+          this.routes[location] = func;
+        },
+      };
+
+      Router.init(historyModule);
+      Router.use('/foo', function () {
+        var containers = document.getElementsByClassName('container');
+        for (var i = 0; i < containers.length; i++) {
+          containers[i].style.display = 'none';
+        }
+        containers[0].style.display = 'block';
+      });
+
+      Router.use('/bar', function () {
+        var containers = document.getElementsByClassName('container');
+        for (var i = 0; i < containers.length; i++) {
+          containers[i].style.display = 'none';
+        }
+        containers[1].style.display = 'block';
+      });
+
+      Router.use('/baz', function () {
+        var containers = document.getElementsByClassName('container');
+        for (var i = 0; i < containers.length; i++) {
+          containers[i].style.display = 'none';
+        }
+        containers[2].style.display = 'block';
+      });
+
+      var links = document.getElementsByTagName('a');
+      for (var i = 0; i < links.length; i++) {
+        links[i].addEventListener('click', function (event) {
+          event.preventDefault();
+          var target = event.target;
+          historyModule.pushState(target.getAttribute('href'));
+        });
+      }
+
+      window.addEventListener('popstate', function (event) {
+        console.log('popstate');
+      })
+    </script>
+  </body>
+</html>

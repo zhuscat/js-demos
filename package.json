@@ -1,0 +1,19 @@
+{
+  "name": "js-demos",
+  "version": "1.0.0",
+  "description": "写一些小 demo 的地方",
+  "main": "add_comma.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhuscat/js-demos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhuscat/js-demos/issues"
+  },
+  "homepage": "https://github.com/zhuscat/js-demos#readme"
+}
