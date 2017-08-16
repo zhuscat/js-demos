@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>CSS Sticky</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      .canvas {
+        height: 200px;
+        background-color: lightpink;
+      }
+      .header {
+        width: 100%;
+        height: 64px;
+        background-color: lightgray;
+      }
+      .sticky {
+        position: fixed;
+        top: 15px;
+      }
+      .section {
+        height: 1000px;
+        background-color: lightblue;
+      }
+      :target:before {
+        content: "";
+        display: block;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+    </div>
+    <div class="header">
+      Sticky Header
+      <a href="#one">One</a>
+      <a href="#two">Two</a>
+      <a href="#three">Three</a>
+    </div>
+    <div class="content">
+      <div class="section">
+        <h2 id="one">One</h2>
+      </div>
+      <div class="section">
+        <h2 id="two">Two</h2>
+      </div>
+      <div class="section">
+        <h2 id="three">Three</h2>
+      </div>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <script>
+      var $window = $(window)
+      var $header = $('.header')
+      var toggleHeaderSticky = function () {
+        if ($window.scrollTop() > 80) {
+          $header.addClass('sticky')
+        } else {
+          $header.removeClass('sticky')
+        }
+      }
+
+      var rafTime
+      $window.scroll('scroll', function () {
+        cancelAnimationFrame(rafTime)
+        rafTime = requestAnimationFrame(toggleHeaderSticky)
+      })
+    </script>
+  </body>
+</html>

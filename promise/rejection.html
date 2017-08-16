@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <script>
+      window.addEventListener('unhandledrejection', event => {
+        event.preventDefault()
+        console.log(`unhandledrejection: ${event.reason}`)
+      })
+      window.addEventListener('rejectionhandled', event => {
+        console.log('Rejection handled')
+      })
+      const p = Promise.resolve().then(() => {
+        return Promise.reject(new Error('some error occurs...'))
+      })
+      setTimeout(() => {
+        p.catch((reason) => {
+          console.log(`catch the reason: ${reason.message}`)
+        })
+      }, 1000)
+    </script>
+  </body>
+</html>
