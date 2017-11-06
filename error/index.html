@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    window.onerror = function(err, line, col) {
+      // 异常上报
+      console.log(err, line, col)
+    }
+
+    // 在 Promise 中抛出的未被处理的异常
+    window.addEventListener('unhandledrejection', function(e) {
+      console.log('rejectionhandled: %s', e.reason.message)
+      e.preventDefault()
+    })
+
+    // 已经处理的异常也可以拿到
+    window.addEventListener('rejectionhandled', function(e) {
+      e.preventDefault()
+    })
+
+    // 网络请求的异常，比如 <img src="./404.png"></img> 中的
+    window.addEventListener('error', function(e) {
+      console.log(e)
+    }, true)
+
+    // unhandled rejection 不会再 onerror 中触发
+    const p = new Promise((resolve, reject) => {
+      setTimeout(() => { reject(new Error('Error In Promise')) }, 0)
+    })
+  </script>
+</body>
+</html>
