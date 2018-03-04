@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Image Compress</title>
+</head>
+<body>
+  <input id="upload" type="file" accept="image/*" capture="camera">
+  <img id="image" src="" alt="">
+  <canvas id="canvas"></canvas>
+  <script>
+    const fileUploadInput = document.getElementById('upload')
+    const image = document.getElementById('image')
+    const canvas = document.getElementById('canvas')
+
+    fileUploadInput.addEventListener('change', (event) => {
+      const file = event.target.files[0]
+      const fileName = file.name
+      const fileType = file.type || 'image/' + fileName.substring(fileName.lastIndexOf('.') + 1)
+      const url = window.URL.createObjectURL(file)
+      image.src = url
+      image.onload = () => {
+        canvas.width = image.width
+        canvas.height = image.height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(image, 0, 0)
+        const quality = 30
+        const compressedDataURL = canvas.toDataURL(fileType, quality / 100)
+        console.log(compressedDataURL)
+      }
+    })
+  </script>
+</body>
+</html>
+
